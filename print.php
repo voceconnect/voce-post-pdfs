@@ -21,7 +21,7 @@
 	}
 </script>
 <div class="header">
-	
+	<?php do_action('voce_post_pdfs_logo'); ?>
 </div>
 <div class="well">
 <?php if (have_posts()) : while (have_posts()) : the_post(); ?>

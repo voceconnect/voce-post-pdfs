@@ -47,9 +47,12 @@ class Voce_Post_PDFS {
 	public static function template_include( $template ) {
 		global $post;
 		// redirect to the pdf or 404
-		if( $post && get_query_var( 'pdf' ) )
+		if( $post && get_query_var( 'pdf' ) ) {
+			$path = str_replace( TEMPLATEPATH, '', __DIR__ );
+			$template = apply_filters( 'voce_post_pdf_print_template', $path . '/' . self::TEMPLATE );
 			$template = self::view_pdf();
-
+		}
+			
 		return $template;
 	}
 
@@ -95,7 +98,9 @@ class Voce_Post_PDFS {
 			return;
 
 		ob_start();
-		locate_template( array( self::TEMPLATE ), true, true );
+		$path = str_replace( TEMPLATEPATH, '', __DIR__ );
+		$template = apply_filters( 'voce_post_pdf_print_template', $path . '/' . self::TEMPLATE );
+		locate_template( array($template), true, true );
 		$content = ob_get_clean();
 
 		wp_reset_query();

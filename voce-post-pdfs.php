@@ -48,8 +48,6 @@ class Voce_Post_PDFS {
 		global $post;
 		// redirect to the pdf or 404
 		if( $post && get_query_var( 'pdf' ) ) {
-			$path = str_replace( TEMPLATEPATH, '', __DIR__ );
-			$template = apply_filters( 'voce_post_pdf_print_template', $path . '/' . self::TEMPLATE );
 			$template = self::view_pdf();
 		}
 			
@@ -88,8 +86,10 @@ class Voce_Post_PDFS {
 
 		$args = apply_filters( 'save_pdf_query_args', array( 'p' => $post->ID, 'post_type' => $post->post_type, 'post_status' => 'publish' ), $post );
 
-		if( isset( $_GET['lang'] ) )
-			$args['lang'] = $_GET['lang'];
+		apply_filters( 'set_args_lang', function() {
+			if( isset( $_GET['lang'] ) )
+				$args['lang'] = $_GET['lang'];
+		});
 
 		// generate the html
 		query_posts( $args );

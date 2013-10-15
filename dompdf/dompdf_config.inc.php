@@ -255,7 +255,7 @@ def("DOMPDF_DPI", 96);
  *
  * @var bool
  */
-def("DOMPDF_ENABLE_PHP", false);
+def("DOMPDF_ENABLE_PHP", true);
 
 /**
  * Enable inline Javascript
@@ -290,7 +290,7 @@ def("DOMPDF_ENABLE_REMOTE", false);
  * The debug output log
  * @var string
  */
-def("DOMPDF_LOG_OUTPUT_FILE", DOMPDF_FONT_DIR."log.htm");
+def("DOMPDF_LOG_OUTPUT_FILE", false);
 
 /**
  * A ratio applied to the fonts height to be more like browsers' line height
@@ -303,7 +303,7 @@ def("DOMPDF_FONT_HEIGHT_RATIO", 1.1);
  * Allows people to disabled CSS float support
  * @var bool
  */
-def("DOMPDF_ENABLE_CSS_FLOAT", false);
+def("DOMPDF_ENABLE_CSS_FLOAT", true);
 
 /**
  * Enable the built in DOMPDF autoloader
@@ -390,7 +390,7 @@ def('DEBUGCSS', false);
  * Visible in the PDF itself.
  */
 def('DEBUG_LAYOUT', false);
-def('DEBUG_LAYOUT_LINES', true);
-def('DEBUG_LAYOUT_BLOCKS', true);
-def('DEBUG_LAYOUT_INLINE', true);
-def('DEBUG_LAYOUT_PADDINGBOX', true);
+def('DEBUG_LAYOUT_LINES', false);
+def('DEBUG_LAYOUT_BLOCKS', false);
+def('DEBUG_LAYOUT_INLINE', false);
+def('DEBUG_LAYOUT_PADDINGBOX', false);

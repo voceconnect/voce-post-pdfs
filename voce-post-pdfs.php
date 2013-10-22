@@ -47,9 +47,10 @@ class Voce_Post_PDFS {
 	public static function template_include( $template ) {
 		global $post;
 		// redirect to the pdf or 404
-		if( $post && get_query_var( 'pdf' ) )
+		if( $post && get_query_var( 'pdf' ) ) {
 			$template = self::view_pdf();
-
+		}
+			
 		return $template;
 	}
 
@@ -61,9 +62,10 @@ class Voce_Post_PDFS {
 	private static function view_pdf() {
 		global $post;
 
-		$dir = wp_upload_dir();
-		$lang = ( isset( $_GET['lang'] ) ) ? '-' . sanitize_key( $_GET['lang'] ) : '';
-		$file = $dir['basedir'] . '/' . date('Y', strtotime($post->post_date) ) . '/' . date('m', strtotime($post->post_date) ) . '/pdf/' . $post->post_name . $lang . '.pdf';
+		$basepath = self::get_upload_basepath($post);
+		$baseurl = self::get_upload_baseurl($post);
+		$filename = apply_filters('voce_post_pdfs_save_filename', $post->post_name . '.pdf');
+		$file = $basepath . $filename;
 
 		// create pdf if it does not exist
 		if( ! file_exists( $file ) )
@@ -71,10 +73,22 @@ class Voce_Post_PDFS {
 
 		// redirect if the pdf exists
 		if( file_exists( $file ) )
-			wp_redirect( add_query_arg( 't', time(), trailingslashit( $dir['baseurl'] ) . date('Y', strtotime($post->post_date) ) . '/' . date('m', strtotime($post->post_date) ) . '/pdf/' . $post->post_name . $lang . '.pdf' ) );
+			wp_redirect( add_query_arg( 't', time(), $baseurl . $filename ));
 
 		// 404 error if pdf does not exist
 		return locate_template( array( '404.php' ), false, false );;
+	}
+
+	private static function get_upload_basepath($post) {
+		$dir = wp_upload_dir();
+		$basepath = $dir['basedir'] . '/pdf/';
+		return apply_filters('voce_post_pdfs_upload_basepath', $basepath, $post);
+	}
+
+	private static function get_upload_baseurl($post) {
+		$dir = wp_upload_dir();
+		$baseurl = $dir['baseurl'] . '/pdf/';
+		return apply_filters('voce_post_pdfs_upload_baseurl', $baseurl, $post);
 	}
 
 	/**
@@ -83,10 +97,12 @@ class Voce_Post_PDFS {
 	 */
 	 public static function save_pdf( $post ) {
 
-		$args = apply_filters( 'save_pdf_query_args', array( 'p' => $post->ID, 'post_type' => $post->post_type, 'post_status' => 'publish' ), $post );
-
-		if( isset( $_GET['lang'] ) )
-			$args['lang'] = $_GET['lang'];
+		$args = apply_filters( 'voce_post_pdfs_save_query_args', 
+			array( 
+				'p' => $post->ID, 
+				'post_type' => $post->post_type, 
+				'post_status' => 'publish' 
+			), $post );
 
 		// generate the html
 		query_posts( $args );
@@ -95,7 +111,9 @@ class Voce_Post_PDFS {
 			return;
 
 		ob_start();
-		locate_template( array( self::TEMPLATE ), true, true );
+		$path = str_replace( TEMPLATEPATH, '', __DIR__ );
+		$template = apply_filters( 'voce_post_pdf_print_template', $path . '/' . self::TEMPLATE );
+		locate_template( array($template), true, true );
 		$content = ob_get_clean();
 
 		wp_reset_query();
@@ -110,13 +128,12 @@ class Voce_Post_PDFS {
 		$dompdf->render();
 
 		// save the pdf
-		$uploads = wp_upload_dir();
-		$dir = $uploads['basedir'] . '/' . date('Y', strtotime($post->post_date) ) . '/' . date('m', strtotime($post->post_date) ) . '/pdf/';
-		if( ! is_dir( $dir ) )
-			mkdir( $dir, 0777, true );
+		$basepath = self::get_upload_basepath($post);
+		if( ! is_dir( $basepath ) )
+			mkdir( $basepath, 0777, true );
 
-		$lang =( isset( $_GET['lang'] ) ) ? '-' . sanitize_key( $_GET['lang'] ) : '';
-		$file = $dir . $post->post_name . $lang . '.pdf';
+		$filename = apply_filters('voce_post_pdfs_save_filename', $post->post_name . '.pdf');
+		$file = $basepath . $filename;
 		return file_put_contents( $file, $dompdf->output() );
 	}
 }

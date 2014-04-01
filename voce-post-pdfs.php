@@ -1,5 +1,13 @@
 <?php
 
+require_once __DIR__ . '/dompdf_config.custom.inc.php';
+
+if( file_exists( __DIR__ . '/vendor/autoload.php' ) ){
+	require_once  __DIR__ . '/vendor/autoload.php';
+}
+
+do_action( 'wp_load_dependency', 'dompdf', 'dompdf_config.inc.php' );
+
 class Voce_Post_PDFS {
 
 	const TEMPLATE = 'print.php';
@@ -9,9 +17,18 @@ class Voce_Post_PDFS {
 	 */
 	public static function initialize() {
 		add_rewrite_endpoint( 'pdf', EP_PERMALINK );
+		add_action( 'init', array( __CLASS__, 'add_endpoints' ) );
 		add_action( 'save_post', array( __CLASS__, 'save_post' ), 10, 2 );
 		add_filter( 'request', array( __CLASS__, 'request' ) );
 		add_filter( 'template_include', array( __CLASS__, 'template_include' ) );
+	}
+
+	/**
+	 * Add 'print' and 'pdf' endpoints
+	 */
+	public static function add_endpoints() {
+		add_rewrite_endpoint( 'print', EP_PERMALINK );
+		add_rewrite_endpoint( 'pdf', EP_PERMALINK );
 	}
 
 	/**
@@ -29,11 +46,15 @@ class Voce_Post_PDFS {
 
 	/**
 	 * If 'print' or 'pdf' request var is set. Set the value to true.
+	 *
 	 * @param $vars array of request variables
 	 * @return array of request variables
 	 */
 	public static function request( $vars ) {
-		if( isset( $vars['pdf'] ) )
+		if ( isset( $vars['print'] ) )
+			$vars['print'] = true;
+
+		if ( isset( $vars['pdf'] ) )
 			$vars['pdf'] = true;
 
 		return $vars;
@@ -45,12 +66,29 @@ class Voce_Post_PDFS {
 	 * @return string the path to template to load
 	 */
 	public static function template_include( $template ) {
-		global $post;
+
+		// load a printer friendly version
+		if ( get_query_var( 'print' ) )
+			$template = load_template( apply_filters( 'create_pdf_print_template_path', locate_template('print.php') ), false );
+
 		// redirect to the pdf or 404
-		if( $post && get_query_var( 'pdf' ) ) {
+		if ( get_query_var( 'pdf' ) ) {
+
+			do_action( 'voce_post_pdfs_before_view_pdf' );
+
 			$template = self::view_pdf();
+
+			do_action( 'voce_post_pdfs_after_view_pdf' );
+
 		}
-			
+
+		return $template;
+	}
+
+	private static function get_404_template() {
+		if ( ! $template = get_404_template() )
+			$template = get_index_template();
+
 		return $template;
 	}
 
@@ -61,6 +99,9 @@ class Voce_Post_PDFS {
 	 */
 	private static function view_pdf() {
 		global $post;
+
+		if ( !post_type_supports( $post->post_type, 'print_pdf' ) )
+			return self::get_404_template();
 
 		$basepath = self::get_upload_basepath($post);
 		$baseurl = self::get_upload_baseurl($post);
@@ -97,11 +138,11 @@ class Voce_Post_PDFS {
 	 */
 	 public static function save_pdf( $post ) {
 
-		$args = apply_filters( 'voce_post_pdfs_save_query_args', 
-			array( 
-				'p' => $post->ID, 
-				'post_type' => $post->post_type, 
-				'post_status' => 'publish' 
+		$args = apply_filters( 'voce_post_pdfs_save_query_args',
+			array(
+				'p' => $post->ID,
+				'post_type' => $post->post_type,
+				'post_status' => 'publish'
 			), $post );
 
 		// generate the html
@@ -117,6 +158,7 @@ class Voce_Post_PDFS {
 		$content = ob_get_clean();
 
 		wp_reset_query();
+
 		if( empty( $content ) )
 			return;
 

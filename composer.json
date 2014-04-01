@@ -1,0 +1,11 @@
+{
+    "name": "voceconnect/voce-post-pdfs",
+    "description": "Generates PDF's from Posts",
+    "authors": [],
+    "type": "wp-plugin",
+    "require": {
+        "dompdf/dompdf": "dev-master",
+        "voceconnect/wp-dependencies": "~0.1"
+    },
+    "minimum-stability": "dev"
+}

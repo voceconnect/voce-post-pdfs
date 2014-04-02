@@ -4,7 +4,7 @@
     "authors": [],
     "type": "wp-plugin",
     "require": {
-        "dompdf/dompdf": "dev-master",
+        "dompdf/dompdf": "~0.6",
         "voceconnect/wp-dependencies": "~0.1"
     },
     "minimum-stability": "dev",

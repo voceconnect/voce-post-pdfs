@@ -155,8 +155,6 @@ class Voce_Post_PDFS {
 		if( empty( $content ) )
 			return;
 
-		// echo $content;
-		// die();
 		do_action( 'wp_load_dependency', 'dompdf/dompdf', 'dompdf_config.inc.php' );
 		// generate the pdf
 		$dompdf = new DOMPDF();

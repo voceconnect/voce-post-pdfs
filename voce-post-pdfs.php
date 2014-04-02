@@ -6,8 +6,6 @@ if( file_exists( __DIR__ . '/vendor/autoload.php' ) ){
 	require_once  __DIR__ . '/vendor/autoload.php';
 }
 
-do_action( 'wp_load_dependency', 'dompdf', 'dompdf_config.inc.php' );
-
 class Voce_Post_PDFS {
 
 	const TEMPLATE = 'print.php';
@@ -16,8 +14,8 @@ class Voce_Post_PDFS {
 	 *
 	 */
 	public static function initialize() {
-		add_rewrite_endpoint( 'pdf', EP_PERMALINK );
-		add_action( 'init', array( __CLASS__, 'add_endpoints' ) );
+		self::add_endpoints();
+
 		add_action( 'save_post', array( __CLASS__, 'save_post' ), 10, 2 );
 		add_filter( 'request', array( __CLASS__, 'request' ) );
 		add_filter( 'template_include', array( __CLASS__, 'template_include' ) );
@@ -27,7 +25,6 @@ class Voce_Post_PDFS {
 	 * Add 'print' and 'pdf' endpoints
 	 */
 	public static function add_endpoints() {
-		add_rewrite_endpoint( 'print', EP_PERMALINK );
 		add_rewrite_endpoint( 'pdf', EP_PERMALINK );
 	}
 
@@ -37,7 +34,12 @@ class Voce_Post_PDFS {
 	 * @param $post
 	 */
 	public static function save_post( $post_id, $post ) {
-		if( wp_is_post_autosave($post_id) || wp_is_post_revision($post_id) || 'post' != $post->post_type || isset($_REQUEST['bulk_edit']) ) {
+		if(
+			wp_is_post_autosave($post_id) ||
+			wp_is_post_revision($post_id) ||
+			post_type_supports( $post->post_type, 'print_pdf' ) ||
+			isset($_REQUEST['bulk_edit'])
+		) {
 			return $post_id;
 		}
 
@@ -45,15 +47,12 @@ class Voce_Post_PDFS {
 	}
 
 	/**
-	 * If 'print' or 'pdf' request var is set. Set the value to true.
+	 * If 'pdf' request var is set. Set the value to true.
 	 *
 	 * @param $vars array of request variables
 	 * @return array of request variables
 	 */
 	public static function request( $vars ) {
-		if ( isset( $vars['print'] ) )
-			$vars['print'] = true;
-
 		if ( isset( $vars['pdf'] ) )
 			$vars['pdf'] = true;
 
@@ -67,10 +66,6 @@ class Voce_Post_PDFS {
 	 */
 	public static function template_include( $template ) {
 
-		// load a printer friendly version
-		if ( get_query_var( 'print' ) )
-			$template = load_template( apply_filters( 'create_pdf_print_template_path', locate_template('print.php') ), false );
-
 		// redirect to the pdf or 404
 		if ( get_query_var( 'pdf' ) ) {
 
@@ -79,7 +74,6 @@ class Voce_Post_PDFS {
 			$template = self::view_pdf();
 
 			do_action( 'voce_post_pdfs_after_view_pdf' );
-
 		}
 
 		return $template;
@@ -152,9 +146,8 @@ class Voce_Post_PDFS {
 			return;
 
 		ob_start();
-		$path = str_replace( TEMPLATEPATH, '', __DIR__ );
-		$template = apply_filters( 'voce_post_pdf_print_template', $path . '/' . self::TEMPLATE );
-		locate_template( array($template), true, true );
+		$template_file = str_replace( TEMPLATEPATH, '', __DIR__ ) . DIRECTORY_SEPARATOR . self::TEMPLATE;
+		load_template( locate_template( apply_filters( 'voce_post_pdf_print_template', $template_file ) ), false );
 		$content = ob_get_clean();
 
 		wp_reset_query();
@@ -162,8 +155,10 @@ class Voce_Post_PDFS {
 		if( empty( $content ) )
 			return;
 
+		// echo $content;
+		// die();
+		do_action( 'wp_load_dependency', 'dompdf/dompdf', 'dompdf_config.inc.php' );
 		// generate the pdf
-		require_once( __DIR__ . '/dompdf/dompdf_config.inc.php' );
 		$dompdf = new DOMPDF();
 		$dompdf->load_html( $content );
 		$dompdf->set_paper( 'letter', 'portrait' );

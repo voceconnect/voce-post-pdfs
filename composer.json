@@ -3,6 +3,7 @@
     "description": "Generates PDF's from Posts",
     "authors": [],
     "type": "wp-plugin",
+    "license": "GPLv2+",
     "require": {
         "dompdf/dompdf": "~0.6",
         "voceconnect/wp-dependencies": "~0.1"

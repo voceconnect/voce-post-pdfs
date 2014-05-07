@@ -146,6 +146,17 @@ class Voce_Post_PDFS {
 		if( !have_posts() )
 			return;
 
+		$basepath = self::get_upload_basepath($post);
+		if( ! is_dir( $basepath ) )
+			mkdir( $basepath, 0777, true );
+
+		$filename = apply_filters('voce_post_pdfs_save_filename', $post->post_name . '.pdf');
+		$file = $basepath . $filename;
+
+		// check if pdf already exists
+		if ( !$overwrite && file_exists( $file ) )
+			return false;
+
 		ob_start();
 		$template_file = str_replace( TEMPLATEPATH, '', __DIR__ ) . DIRECTORY_SEPARATOR . self::TEMPLATE;
 		load_template( locate_template( apply_filters( 'voce_post_pdf_print_template', $template_file ) ), false );
@@ -164,16 +175,6 @@ class Voce_Post_PDFS {
 		$dompdf->render();
 
 		// save the pdf
-		$basepath = self::get_upload_basepath($post);
-		if( ! is_dir( $basepath ) )
-			mkdir( $basepath, 0777, true );
-
-		$filename = apply_filters('voce_post_pdfs_save_filename', $post->post_name . '.pdf');
-		$file = $basepath . $filename;
-
-		if ( !$overwrite && file_exists( $file ) )
-			return false;
-
 		return file_put_contents( $file, $dompdf->output() );
 	}
 }

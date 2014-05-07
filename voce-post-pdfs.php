@@ -114,13 +114,13 @@ class Voce_Post_PDFS {
 		return locate_template( array( '404.php' ), false, false );;
 	}
 
-	private static function get_upload_basepath($post) {
+	public static function get_upload_basepath($post) {
 		$dir = wp_upload_dir();
 		$basepath = $dir['basedir'] . '/pdf/';
 		return apply_filters('voce_post_pdfs_upload_basepath', $basepath, $post);
 	}
 
-	private static function get_upload_baseurl($post) {
+	public static function get_upload_baseurl($post) {
 		$dir = wp_upload_dir();
 		$baseurl = $dir['baseurl'] . '/pdf/';
 		return apply_filters('voce_post_pdfs_upload_baseurl', $baseurl, $post);
@@ -128,9 +128,10 @@ class Voce_Post_PDFS {
 
 	/**
 	 * @param $post
+	 * @param $overwrite boolean specify if the pdf should be overwritten, if it exists
 	 * @return int a numer indicating the number of bytes written or FALSE on failure.
 	 */
-	 public static function save_pdf( $post ) {
+	 public static function save_pdf( $post, $overwrite = true ) {
 
 		$args = apply_filters( 'voce_post_pdfs_save_query_args',
 			array(
@@ -169,6 +170,10 @@ class Voce_Post_PDFS {
 
 		$filename = apply_filters('voce_post_pdfs_save_filename', $post->post_name . '.pdf');
 		$file = $basepath . $filename;
+
+		if ( !$overwrite && file_exists( $file ) )
+			return false;
+
 		return file_put_contents( $file, $dompdf->output() );
 	}
 }

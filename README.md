@@ -1,12 +1,12 @@
 Voce Post PDFs
 ==============
 
-Contributors: johnciacia, kevinlangleyjr, brockangelo  
-Tags: printing, pdf  
-Requires at least: 3.2  
-Tested up to: 3.6  
-Stable tag: 1.0  
-License: GPLv2 or later  
+Contributors: johnciacia, kevinlangleyjr, brockangelo
+Tags: printing, pdf
+Requires at least: 3.2
+Tested up to: 3.8.3
+Stable tag: 1.2
+License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 A WordPress plugin/module that generates a pdf from a post.
@@ -84,3 +84,8 @@ add_filter('voce_post_pdfs_upload_baseurl', function($baseurl, $post){
   return $baseurl;
 }, 10, 2);
 ```
+
+# Changelog
+
+**1.2**
+*Adding a parameter to 'save_pdf' to not overwrite the PDF if the PDF already exists. Also made 'get_upload_basepath' and 'get_upload_baseurl' so other plugins can get a PDFs location.*

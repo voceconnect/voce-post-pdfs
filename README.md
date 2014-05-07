@@ -5,7 +5,7 @@ Contributors: johnciacia, kevinlangleyjr, brockangelo
 Tags: printing, pdf  
 Requires at least: 3.2  
 Tested up to: 3.8.3  
-Stable tag: 1.2  
+Stable tag: 1.2.1  
 License: GPLv2 or later  
 License URI: http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -86,6 +86,9 @@ add_filter('voce_post_pdfs_upload_baseurl', function($baseurl, $post){
 ```
 
 # Changelog
+
+**1.2.1**  
+*Reorganizing the path declarations and pdf existance check in `save_post` to improve performace.*
 
 **1.2**  
 *Adding a parameter to `save_pdf` to not overwrite the PDF, if the PDF already exists. `get_upload_basepath` and `get_upload_baseurl` are now public, so other plugins can retrieve a PDF's location.*

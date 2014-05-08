@@ -37,7 +37,7 @@ class Voce_Post_PDFS {
 		if(
 			wp_is_post_autosave($post_id) ||
 			wp_is_post_revision($post_id) ||
-			post_type_supports( $post->post_type, 'print_pdf' ) ||
+			! post_type_supports( $post->post_type, 'print_pdf' ) ||
 			isset($_REQUEST['bulk_edit'])
 		) {
 			return $post_id;

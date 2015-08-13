@@ -125,7 +125,10 @@ class Voce_Post_PDFS {
 	}
 
 	protected static function wp_upload_dir() {
-		static $wp_upload_dir = wp_upload_dir();
+		static $wp_upload_dir = null;
+		if( is_null( $wp_upload_dir ) ) {
+			$wp_upload_dir = wp_upload_dir();
+		}
 		return $wp_upload_dir;
 	}
 

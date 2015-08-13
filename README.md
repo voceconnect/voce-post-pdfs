@@ -5,7 +5,7 @@ Contributors: johnciacia, kevinlangleyjr, brockangelo
 Tags: printing, pdf  
 Requires at least: 3.2  
 Tested up to: 3.8.3  
-Stable tag: 1.2.2  
+Stable tag: 1.2.3  
 License: GPLv2 or later  
 License URI: http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -86,6 +86,8 @@ add_filter('voce_post_pdfs_upload_baseurl', function($baseurl, $post){
 ```
 
 # Changelog
+**1.2.3**
+* Reducing calls to wp_uploads_dir for performance reasons
 
 **1.2.1**  
 *Reorganizing the path declarations and pdf existance check in `save_post` to improve performace.*

@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/dompdf_config.custom.inc.php';
-
 if( file_exists( __DIR__ . '/vendor/autoload.php' ) ){
 	require_once  __DIR__ . '/vendor/autoload.php';
 }
@@ -115,15 +113,20 @@ class Voce_Post_PDFS {
 	}
 
 	public static function get_upload_basepath($post) {
-		$dir = wp_upload_dir();
+		$dir = self::wp_upload_dir();
 		$basepath = $dir['basedir'] . '/pdf/';
 		return apply_filters('voce_post_pdfs_upload_basepath', $basepath, $post);
 	}
 
 	public static function get_upload_baseurl($post) {
-		$dir = wp_upload_dir();
+		$dir = self::wp_upload_dir();
 		$baseurl = $dir['baseurl'] . '/pdf/';
 		return apply_filters('voce_post_pdfs_upload_baseurl', $baseurl, $post);
+	}
+
+	protected static function wp_upload_dir() {
+		static $wp_upload_dir = wp_upload_dir();
+		return $wp_upload_dir;
 	}
 
 	/**
@@ -166,6 +169,8 @@ class Voce_Post_PDFS {
 
 		if( empty( $content ) )
 			return;
+
+		require_once __DIR__ . '/dompdf_config.custom.inc.php';
 
 		do_action( 'wp_load_dependency', 'dompdf/dompdf', 'dompdf_config.inc.php' );
 		// generate the pdf

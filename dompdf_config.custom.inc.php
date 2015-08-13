@@ -1,6 +1,6 @@
 <?php
 
-$upload_dir = wp_upload_dir();
+$upload_dir = Voce_Post_PDFS::wp_upload_dir();
 if( ! is_dir( $upload_dir['basedir'] . '/dompdf/fonts' ) ){
 	mkdir( $upload_dir['basedir'] . '/dompdf/fonts', 0777, true );
 }

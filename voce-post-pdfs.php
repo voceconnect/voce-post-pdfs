@@ -105,8 +105,10 @@ class Voce_Post_PDFS {
 			self::save_pdf( $post );
 
 		// redirect if the pdf exists
-		if( file_exists( $file ) )
+		if( file_exists( $file ) ) {
 			wp_redirect( add_query_arg( 't', time(), $baseurl . $filename ));
+			die;
+		}
 
 		// 404 error if pdf does not exist
 		return locate_template( array( '404.php' ), false, false );;

@@ -179,7 +179,7 @@ class Voce_Post_PDFS {
 
 		require_once __DIR__ . '/dompdf_config.custom.inc.php';
 
-		do_action( 'wp_load_dependency', 'dompdf/dompdf', 'dompdf_config.inc.php' );
+		do_action( 'wp_load_dependency', 'dompdf/dompdf', 'src/Autoloader.php' );
 		// generate the pdf
 		$dompdf = new DOMPDF();
 		$dompdf->load_html( $content );

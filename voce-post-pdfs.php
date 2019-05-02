@@ -1,6 +1,6 @@
 <?php
 
-use Dompdf\DOMPDF;
+use Dompdf\Dompdf;
 
 if( file_exists( __DIR__ . '/vendor/autoload.php' ) ){
 	require_once  __DIR__ . '/vendor/autoload.php';
@@ -179,9 +179,9 @@ class Voce_Post_PDFS {
 
 		require_once __DIR__ . '/dompdf_config.custom.inc.php';
 
-		do_action( 'wp_load_dependency', 'dompdf/dompdf', 'dompdf_config.inc.php' );
+		do_action( 'wp_load_dependency', 'dompdf/dompdf', 'src/Autoloader.php' );
 		// generate the pdf
-		$dompdf = new DOMPDF();
+		$dompdf = new Dompdf();
 		$dompdf->load_html( $content );
 		$dompdf->set_paper( 'letter', 'portrait' );
 		$dompdf->render();

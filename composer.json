@@ -5,7 +5,7 @@
     "type": "wp-plugin",
     "license": "GPLv2+",
     "require": {
-        "dompdf/dompdf": "~0.6",
+        "dompdf/dompdf": "~0.8",
         "voceconnect/wp-dependencies": "~0.1"
     },
     "minimum-stability": "dev",

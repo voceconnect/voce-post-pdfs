@@ -1,6 +1,7 @@
 <?php
 
 use Dompdf\Dompdf;
+use Dompdf\Options;
 
 if( file_exists( __DIR__ . '/vendor/autoload.php' ) ){
 	require_once  __DIR__ . '/vendor/autoload.php';
@@ -180,8 +181,15 @@ class Voce_Post_PDFS {
 		require_once __DIR__ . '/dompdf_config.custom.inc.php';
 
 		do_action( 'wp_load_dependency', 'dompdf/dompdf', 'src/Autoloader.php' );
-		// generate the pdf
+
+		// Create new Dompdf Options object.
+		$options = new Options();
+		// Enable is remote to retreive assets that are referenced with an absolute URL.
+		$options->setIsRemoteEnabled( true );
+
+		// Generate the PDF
 		$dompdf = new Dompdf();
+		$dompdf->setOptions( $options );
 		$dompdf->load_html( $content );
 		$dompdf->set_paper( 'letter', 'portrait' );
 		$dompdf->render();

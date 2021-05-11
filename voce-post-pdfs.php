@@ -180,8 +180,6 @@ class Voce_Post_PDFS {
 
 		require_once __DIR__ . '/dompdf_config.custom.inc.php';
 
-		do_action( 'wp_load_dependency', 'dompdf/dompdf', 'src/Autoloader.php' );
-
 		// Create new Dompdf Options object.
 		$options = new Options();
 		// Enable is remote to retreive assets that are referenced with an absolute URL.

@@ -3,7 +3,7 @@
     "description": "Generates PDF's from Posts",
     "authors": [],
     "type": "wordpress-plugin",
-    "license": "GPLv2+",
+    "license": "GPL-2.0-or-later",
     "require": {
         "dompdf/dompdf": "^1.0"
     },

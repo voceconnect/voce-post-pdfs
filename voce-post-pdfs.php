@@ -196,4 +196,7 @@ class Voce_Post_PDFS {
 		return file_put_contents( $file, $dompdf->output() );
 	}
 }
-add_action( 'init', array( 'Voce_Post_PDFS', 'initialize' ) );
+
+if ( function_exists( 'add_action' ) ) {
+	add_action( 'init', array( 'Voce_Post_PDFS', 'initialize' ) );
+}

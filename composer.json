@@ -5,7 +5,7 @@
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "require": {
-        "dompdf/dompdf": "^1.0"
+        "dompdf/dompdf": "^2.0"
     },
     "minimum-stability": "dev",
     "autoload": {
